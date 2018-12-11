@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    tools {
+        maven 'localMaven'
+        jdk 'localJDK'
+    }
     parameters {
         string(name: 'tomcat_stage_dir', defaultValue: '/opt/app/tomcat/staging/apache-tomcat-8.5.35/webapps', description: 'Staging Tomcat Instance')
         string(name: 'tomcat_prod_dir', defaultValue: '/opt/app/tomcat/prod/apache-tomcat-8.5.35/webapps', description: 'Production Tomcat Instance')
