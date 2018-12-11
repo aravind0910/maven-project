@@ -32,10 +32,10 @@ pipeline {
                 build job: 'deploy-to-production'
             }
             post {
-                sucess {
+                success {
                     echo 'Code deployed to Production.'
                 }
-                failue {
+                failure {
                     echo 'Deployment failed.'
                 }
             }
