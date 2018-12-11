@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'tomcat_stage_dir', defaultValue: '/opt/app/tomcat/staging/apache-tomcat-8.5.35/webapps', description: 'Staging Tomcat Instance')
+        string(name: 'tomcat_prod_dir', defaultValue: '/opt/app/tomcat/prod/apache-tomcat-8.5.35/webapps', description: 'Production Tomcat Instance')
+    }
+
+    triggers {
+        pollSCM('* * * * *')
+    }
+
+    stages {
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+            post {
+                success {
+                    echo "Now Archiving....."
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
+        }
+
+        stage('Deployments') {
+            parallel {
+
+                stage('Deploy to Staging') {
+                    steps {
+                        sh 'cp **/target/*.war ${params.tomcat_stage_dir}'
+                    }
+                }
+                stage('Deploy to Production') {
+                    steps {
+                        sh 'cp **/target/*.war ${params.tomcat_prod_dir}'
+                    }
+                }
+            }
+        }
+    }
+}
